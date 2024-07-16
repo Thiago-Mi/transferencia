@@ -35,6 +35,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -57,7 +58,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  assets:
+    - imagens\200_front.jpg
+    - fonts\PlaywriteCU-Regular.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -85,6 +88,16 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+  # fonts:
+  # - family: PlaywriteCU
+  #   fonts:  
+  #     - asset: fonts/PlaywriteCU-Regular.ttf
+  #       weight: 300 
+  #     - asset: fonts/PlaywriteCU-Light.ttf
+  #       weight: 400
+  #     - asset: fonts/PlaywriteCU-Thin.ttf
+  #       weight: 500
+  #     - asset: fonts/PlaywriteCU-ExtraLight.ttf
+  #       weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

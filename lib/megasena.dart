@@ -25,37 +25,21 @@ class Page1 extends StatefulWidget {
 }
 
 class _Page1State extends State<Page1> {
-  int valor = 0;
   List<int> espaco = [0, 0, 0, 0, 0, 0];
 
   void incrementValue(int increment, int espacoIndice) {
     setState(() {
-      if (espaco[espacoIndice] + increment > 0 & espaco[espacoIndice] + increment < 61 ){
-
+      if ((espaco[espacoIndice] + increment >= 0) & (espaco[espacoIndice] + increment < 61)) {
         espaco[espacoIndice] += increment;
       }
     });
-  }
-
-  List<int> gerarNumerosAleatorios() {
-    Random random = Random();
-    List<int> numeros = [];
-
-    while (numeros.length < 6) {
-      int numero = random.nextInt(60) + 1;
-      if (!numeros.contains(numero)) {
-        numeros.add(numero);
-      }
-    }
-
-    return numeros;
   }
 
   void transferValue() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Page2(valor: valor),
+        builder: (context) => Page2(espaco: espaco),
       ),
     );
   }
@@ -77,97 +61,69 @@ class _Page1State extends State<Page1> {
             ),
             Row(
               children: [
-                
                 const SizedBox(width: 80),
-                Text(
-                  '${espaco[0]}',
-                  style: const TextStyle(fontSize: 24),
-                ),
-                
+                NumberDisplay(number: '${espaco[0]}'),
                 const SizedBox(width: 60),
-                Text(
-                  '${espaco[1]}',
-                  style: const TextStyle(fontSize: 24),
-                ),
+                NumberDisplay(number: '${espaco[1]}'),
                 const SizedBox(width: 60),
-                Text(
-                  '${espaco[2]}',
-                  style: const TextStyle(fontSize: 24),
-                ),
-                
+                NumberDisplay(number: '${espaco[2]}'),
                 const SizedBox(width: 60),
-                Text(
-                  '${espaco[3]}',
-                  style: const TextStyle(fontSize: 24),
-                ),
+                NumberDisplay(number: '${espaco[3]}'),
                 const SizedBox(width: 60),
-                Text(
-                  '${espaco[4]}',
-                  style: const TextStyle(fontSize: 24),
-                ),
-                
+                NumberDisplay(number: '${espaco[4]}'),
                 const SizedBox(width: 60),
-                Text(
-                  '${espaco[5]}',
-                  style: const TextStyle(fontSize: 24),
-                ),
+                NumberDisplay(number: '${espaco[5]}'),
               ],
             ),
-            const Divider(
-              height: 20,
-              thickness: 1,
-              color: Colors.black,
-            ),
-            
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(-1, 0),
                   child: const Text('-'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(1, 0),
                   child: const Text('+'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(-1, 1),
                   child: const Text('-'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(1, 1),
                   child: const Text('+'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(-1, 2),
                   child: const Text('-'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(1, 2),
                   child: const Text('+'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(-1, 3),
                   child: const Text('-'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(1, 3),
                   child: const Text('+'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(-1, 4),
                   child: const Text('-'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(1, 4),
                   child: const Text('+'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(-1, 5),
                   child: const Text('-'),
                 ),
-                ElevatedButton(
+                SquareButton(
                   onPressed: () => incrementValue(1, 5),
                   child: const Text('+'),
                 ),
@@ -188,30 +144,100 @@ class _Page1State extends State<Page1> {
 }
 
 class Page2 extends StatelessWidget {
-  final int valor;
+  final List<int> espaco;
+  final List<int> numerosAleatorios;
 
-  const Page2({super.key, required this.valor});
+  Page2({super.key, required this.espaco})
+      : numerosAleatorios = List.generate(6, (_) => Random().nextInt(60) + 1);
 
   @override
   Widget build(BuildContext context) {
+    int matchingCount = compareLists(espaco, numerosAleatorios);
+
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
+      appBar: AppBar(
+        title: const Text('Resultado'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Você Transferiu',
-              style: TextStyle(fontSize: 50),
+              'Números Selecionados:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text(
-              'R\$ $valor,00',
-              style: const TextStyle(fontSize: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: espaco.map((num) => NumberDisplay(number: '$num')).toList(),
             ),
+            const SizedBox(height: 20),
+            const Text(
+              'Números Aleatórios:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: numerosAleatorios.map((num) => NumberDisplay(number: '$num')).toList(),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Você fez $matchingCount pontos',
+              style: const TextStyle(
+                fontFamily: 'PlaywriteCU',
+                fontSize: 24,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+            const SizedBox(height: 20),
+            Image.asset('imagens/200_front.jpg'),
           ],
         ),
       ),
+    );
+  }
+
+  int compareLists(List<int> list1, List<int> list2) {
+    return list1.where((element) => list2.contains(element)).length;
+  }
+}
+
+class NumberDisplay extends StatelessWidget {
+  final String number;
+  const NumberDisplay({super.key, required this.number});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Text(
+        number,
+        style: const TextStyle(fontSize: 24),
+      ),
+    );
+  }
+}
+
+class SquareButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final Widget child;
+
+  const SquareButton({super.key, required this.onPressed, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: const EdgeInsets.all(16),
+      ),
+      child: child,
     );
   }
 }

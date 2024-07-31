@@ -20,16 +20,15 @@ class Page1 extends StatefulWidget {
   const Page1({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _Page1State createState() => _Page1State();
 }
 
 class _Page1State extends State<Page1> {
-  List<int> espaco = [0, 0, 0, 0, 0, 0];
+  List<int> espaco = [4, 7, 15, 20, 34, 58];
 
   void incrementValue(int increment, int espacoIndice) {
     setState(() {
-      if ((espaco[espacoIndice] + increment >= 0) & (espaco[espacoIndice] + increment < 61)) {
+      if ((espaco[espacoIndice] + increment >= 1) & (espaco[espacoIndice] + increment < 61)) {
         espaco[espacoIndice] += increment;
       }
     });
@@ -133,7 +132,7 @@ class _Page1State extends State<Page1> {
             Center(
               child: ElevatedButton(
                 onPressed: transferValue,
-                child: const Text('Transferir'),
+                child: const Text('Sortear e Conferir'),
               ),
             ),
           ],
@@ -147,8 +146,7 @@ class Page2 extends StatelessWidget {
   final List<int> espaco;
   final List<int> numerosAleatorios;
 
-  Page2({super.key, required this.espaco})
-      : numerosAleatorios = List.generate(6, (_) => Random().nextInt(60) + 1);
+  Page2({super.key, required this.espaco}) : numerosAleatorios = gerarNumerosAleatorios();
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +173,7 @@ class Page2 extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Números Aleatórios:',
+              'Números Sorteados:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -187,10 +185,9 @@ class Page2 extends StatelessWidget {
             Text(
               'Você fez $matchingCount pontos',
               style: const TextStyle(
-                fontFamily: 'PlaywriteCU',
-                fontSize: 24,
-                fontWeight: FontWeight.bold
-              ),
+              fontFamily: 'PlaywriteCU', 
+              fontStyle: FontStyle.italic,
+              fontSize: 24),
             ),
             const SizedBox(height: 20),
             Image.asset('imagens/200_front.jpg'),
@@ -198,6 +195,17 @@ class Page2 extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static List<int> gerarNumerosAleatorios() {
+    Random random = Random();
+    Set<int> numeros = {};
+
+    while (numeros.length < 6) {
+      numeros.add(random.nextInt(60) + 1);
+    }
+
+    return numeros.toList();
   }
 
   int compareLists(List<int> list1, List<int> list2) {

@@ -4,7 +4,6 @@ void main() {
   runApp(const MyApp());
 }
 
-// A classe principal do aplicativo Flutter
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -18,7 +17,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// A classe StatefulWidget que gerencia o estado do quiz
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
 
@@ -28,26 +26,21 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  // Controlador para o campo de texto onde o usuário digita seu nome
   final TextEditingController _nameController = TextEditingController();
-
-  // Variáveis de estado
-  String? userName;             // Nome do usuário
-  bool isAdult = true;          // Indica se o quiz é para adultos
-  int currentQuestionIndex = 0; // Índice da pergunta atual
-  int score = 0;                // Pontuação do usuário
-  bool quizFinished = false;    // Indica se o quiz foi concluído
-  bool showAnswers = false;     // Controla a exibição das respostas corretas
-  List<Question> questions = []; // Lista de perguntas do quiz atual
-  List<Answer> shuffledAnswers = []; // Alternativas embaralhadas da pergunta atual
-
-  // Flags para verificar se as duas listas de perguntas foram completadas
+  String? userName;
+  bool isAdult = true;
+  int currentQuestionIndex = 0;
+  int score = 0;
+  bool quizFinished = false;
+  bool showAnswers = false;
+  List<Question> questions = [];
+  List<Answer> shuffledAnswers = [];
   bool adultQuizCompleted = false;
   bool minorQuizCompleted = false;
 
   @override
   void dispose() {
-    _nameController.dispose(); // Limpa o controlador de texto ao destruir o widget
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -58,30 +51,27 @@ class _QuizPageState extends State<QuizPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: quizFinished
-            ? buildResultPage() // Exibe a página de resultados se o quiz foi concluído
-            : (userName == null ? buildStartPage() : buildQuestionPage()), // Exibe a página inicial ou de perguntas
+            ? buildResultPage()
+            : (userName == null ? buildStartPage() : buildQuestionPage()),
       ),
     );
   }
 
-  // Constrói a página inicial do quiz
   Widget buildStartPage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Spacer(),
-        buildImages(), // Exibe as imagens no topo da página
+        buildImages(),
         const Text(
           'QUIZ',
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
-        // Campo de texto para o usuário digitar seu nome
         TextField(
           controller: _nameController,
           decoration: const InputDecoration(labelText: 'Seu Nome'),
         ),
-        // Checkbox para selecionar se o usuário é maior ou menor de idade
         CheckboxListTile(
           title: const Text('Maior de idade'),
           value: isAdult,
@@ -92,18 +82,15 @@ class _QuizPageState extends State<QuizPage> {
           value: !isAdult,
           onChanged: (value) => setState(() => isAdult = !value!),
         ),
-        // Botão "Começar" que inicia o quiz
         ElevatedButton(
           onPressed: () {
             setState(() {
-              userName = _nameController.text; // Armazena o nome do usuário
+              userName = _nameController.text;
               currentQuestionIndex = 0;
               score = 0;
               quizFinished = false;
               showAnswers = false;
-              // Seleciona a lista de perguntas com base na escolha do usuário
               questions = isAdult ? adultQuestions : minorQuestions;
-              // Embaralha as alternativas da primeira pergunta
               shuffledAnswers = questions[currentQuestionIndex].answers..shuffle();
             });
           },
@@ -114,9 +101,7 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  // Constrói a página das perguntas do quiz
   Widget buildQuestionPage() {
-    // Verifica se o quiz foi completado
     if (currentQuestionIndex >= questions.length) {
       quizFinished = true;
       return buildResultPage();
@@ -128,46 +113,49 @@ class _QuizPageState extends State<QuizPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Spacer(),
-        buildImages(), // Exibe as imagens no topo da página
+        buildImages(),
         const Text(
           'QUIZ',
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
-        // Exibe a pergunta atual
         Text(currentQuestion.question),
-        // Exibe as alternativas como uma lista de ListTiles
-        for (Answer answer in shuffledAnswers)
-          ListTile(
-            title: Text(answer.text),
-            leading: showAnswers
-                ? Icon(
-                    answer.isCorrect ? Icons.check_circle : Icons.cancel,
-                    color: answer.isCorrect ? Colors.green : Colors.red,
-                  )
-                : null,
-            // Ação ao selecionar uma alternativa
-            onTap: () {
-              if (!showAnswers) {
-                setState(() {
-                  showAnswers = true;
-                  // Incrementa a pontuação se a resposta estiver correta
-                  if (answer.isCorrect) {
-                    score++;
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            itemCount: shuffledAnswers.length,
+            itemBuilder: (context, index) {
+              final answer = shuffledAnswers[index];
+              return ListTile(
+                title: Text(answer.text),
+                leading: showAnswers
+                    ? Image.asset(
+                          // answer.isCorrect ? Icons.check_circle : Icons.cancel,
+                          answer.isCorrect ? 
+                      //     color: answer.isCorrect ? Colors.green : Colors.red,
+                        'imagens/aceitar.jpg' : 'imagens/negativo.jpg'
+                        )
+                      : null,
+                onTap: () {
+                  if (!showAnswers) {
+                    setState(() {
+                      showAnswers = true;
+                      if (answer.isCorrect) {
+                        score++;
+                      }
+                    });
                   }
-                });
-              }
+                },
+              );
             },
           ),
-        const Spacer(),
-        // Botão "Próxima" para avançar para a próxima pergunta
+        ),
         ElevatedButton(
           onPressed: showAnswers
               ? () {
                   setState(() {
                     currentQuestionIndex++;
                     showAnswers = false;
-                    // Embaralha as alternativas da próxima pergunta
                     if (currentQuestionIndex < questions.length) {
                       shuffledAnswers = questions[currentQuestionIndex].answers..shuffle();
                     }
@@ -181,45 +169,39 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  // Constrói a página de resultados do quiz
   Widget buildResultPage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Spacer(),
-        buildImages(), // Exibe as imagens no topo da página
+        buildImages(),
         const Text(
           'QUIZ',
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
-        // Exibe a pontuação do usuário
         Text('Resultado: $userName, você fez $score acertos.'),
         const Text('Experimente responder as questões para a outra opção.'),
-        // Botão para recomeçar o quiz ou reiniciar a aplicação
         ElevatedButton(
           onPressed: () {
             setState(() {
-              // Marca o quiz como completo e verifica se ambos foram completados
               if (isAdult) {
                 adultQuizCompleted = true;
               } else {
                 minorQuizCompleted = true;
               }
 
-              // Se ambos os quizzes foram completados, reseta a aplicação
               if (adultQuizCompleted && minorQuizCompleted) {
                 userName = null;
-                _nameController.clear(); // Limpa o nome do usuário
+                _nameController.clear();
                 adultQuizCompleted = false;
                 minorQuizCompleted = false;
                 isAdult = true;
               } else {
                 userName = _nameController.text;
-                isAdult = !isAdult; // Alterna para a outra lista de perguntas
+                isAdult = !isAdult;
               }
 
-              // Reseta o estado do quiz
               currentQuestionIndex = 0;
               score = 0;
               quizFinished = false;
@@ -228,7 +210,6 @@ class _QuizPageState extends State<QuizPage> {
               shuffledAnswers = questions[currentQuestionIndex].answers..shuffle();
             });
           },
-          // Exibe "Voltar ao início" se ambos os quizzes foram completados
           child: Text(adultQuizCompleted && minorQuizCompleted ? 'Voltar ao início' : 'Recomeçar'),
         ),
         const Spacer(),
@@ -236,7 +217,6 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  // Constrói a linha de imagens na parte superior da tela
   Widget buildImages() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
